@@ -1,0 +1,50 @@
+.tweet {
+    width: 100%;
+    border-bottom: 1px solid rgb(214, 214, 214);
+    padding: 12px;
+
+    &:hover {
+        background-color: rgb(247, 247, 247);
+    }
+
+    &-user {
+        font-weight: bold;
+        margin-bottom: 6px;
+    }
+
+    &-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 24px;
+    }
+
+    &.reply {
+        padding-left: 50px;
+        position: relative;
+        
+        &::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            bottom: 12px;
+            left: 25px;
+            width: 2px;
+            background: rgb(214, 214, 214);
+        }
+    }
+}
+
+.create {
+    margin-bottom: 24px;
+
+    .action {
+        display: flex;
+        justify-content: flex-end;
+
+        .btn {
+            width: auto;
+            margin-top: 12px;
+        }
+    }
+
+}
