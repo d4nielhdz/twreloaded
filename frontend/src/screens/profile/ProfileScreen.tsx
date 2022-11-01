@@ -7,6 +7,8 @@ import { auth } from '../../firebase-config';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { getUserById } from '../../services/auth-service';
 import { User } from '../../models/user';
+import { TweetModel } from '../../models/tweet';
+import { getTweetsFromUser } from '../../services/tweets-service';
 
 const ProfileScreen = () => {
   const context = useContext(AppContext);
@@ -15,7 +17,9 @@ const ProfileScreen = () => {
   const { id } = useParams();
   const isOwner = id == auth.currentUser?.uid ?? false;
 
+  const [loading, setLoading] = useState<boolean>(true);
   const [profile, setProfile] = useState<User>();
+  const [tweets, setTweets] = useState<TweetModel[]>([]);
 
   const [following, setFollowing] = useState(false);
   const followers = 100;
@@ -36,6 +40,18 @@ const ProfileScreen = () => {
       setProfile(context.user);
     }
   }, [isOwner]);
+
+  useEffect(() => {
+    if (profile) {
+      const getTweets = async () => {
+        const data = await getTweetsFromUser(profile) as TweetModel[];
+        console.log(data);
+        setTweets(data);
+      }
+      getTweets().catch(console.error);
+      setLoading(false);
+    }
+  }, [profile]);
 
   return (
     <div>
@@ -65,9 +81,11 @@ const ProfileScreen = () => {
         </div>
       }
       <div>
-        <Tweet />
-        <Tweet />
-        <Tweet />
+        {
+          loading
+            ? <div className="lds-ring blue"><div></div><div></div><div></div><div></div></div>
+            : tweets.map((tweet, i) => <Tweet tweet={tweet} key={i} />)
+        }
       </div>
     </div>
   )

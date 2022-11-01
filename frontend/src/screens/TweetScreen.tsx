@@ -4,11 +4,11 @@ import Tweet from '../components/Tweet'
 const TweetScreen = () => {
   return (
     <div>
-      <Tweet />
+      {/* <Tweet /> */}
 
       <div>
-        <Tweet isReply={true} />
-        <Tweet isReply={true} />
+        {/* <Tweet isReply={true} />
+        <Tweet isReply={true} /> */}
       </div>
     </div>
   )

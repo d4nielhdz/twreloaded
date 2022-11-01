@@ -3,22 +3,21 @@ import '../styles/tweet.scss';
 import { MdOutlineChatBubbleOutline } from 'react-icons/md';
 import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai';
 import { useNavigate } from 'react-router-dom';
+import { TweetModel } from '../models/tweet';
 
-const Tweet = ({ isReply } : { isReply? : boolean }) => {
+const Tweet = ({ tweet } : { tweet : TweetModel }) => {
     const navigate = useNavigate();
-    const username = 'nombreUsuario123';
-    const tweetId = 1;
-    const tweet = 'Lorem ipsum dolor sit amet, consectetur adip elit';
+
     const replies = 10;
     const likes = 20;
     const [like, setLike] = useState(false);
 
     const seeProfile = (e: any) => {
         e.stopPropagation()
-        navigate(`/profile/${username}`)
+        navigate(`/profile/${tweet.user.id}`)
     };
     
-    const seeTweet = () => navigate(`/tweet/${tweetId}`);
+    const seeTweet = () => navigate(`/tweet/${tweet.id}`);
 
     const getLikesButtonContent = () => {
         if (like) {
@@ -29,12 +28,12 @@ const Tweet = ({ isReply } : { isReply? : boolean }) => {
     }
 
     return (
-        <div className={`tweet ${isReply ? 'reply' : ''}`} onClick={seeTweet}>
+        <div className={`tweet ${tweet.replyTo ? 'reply' : ''}`} onClick={seeTweet}>
             <div className='tweet-user'>
-                <button className='bold btn link' onClick={seeProfile}>{username}</button>
+                <button className='bold btn link' onClick={seeProfile}>{tweet.user.username}</button>
             </div>
             <div className='tweet-content'>
-                {tweet}
+                {tweet.content}
             </div>
             <div className='tweet-actions'>
                 <div className='reply'>

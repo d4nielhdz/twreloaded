@@ -14,8 +14,10 @@ const app = express();
 app.use(cors({ origin: true }));
 
 // ROUTES
-const userRoute = require('./routes/users');
-app.use('/users', userRoute);
+const usersRoute = require('./routes/users');
+const tweetsRoute = require('./routes/tweets');
+app.use('/users', usersRoute);
+app.use('/tweets', tweetsRoute);
 
 app.get('/', (req, res) => {
     return res.status(200).send("Hola");

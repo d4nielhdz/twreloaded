@@ -9,9 +9,9 @@ const HomeScreen = () => {
         <CreateTweet />
       </div>
       <div>
+        {/* <Tweet />
         <Tweet />
-        <Tweet />
-        <Tweet />
+        <Tweet /> */}
       </div>
     </div>
   )

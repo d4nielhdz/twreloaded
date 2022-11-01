@@ -65,7 +65,7 @@ router.put('/:id', async (req, res) => {
     const user = req.body;
 
     const snapshot = await db.collection('users').where("username", "==", user.username).get();
-    console.log(user);
+    
     if (snapshot.empty) {
         await db.collection('users').doc(req.params.id).update({ ...user });
         res.status(200).send();

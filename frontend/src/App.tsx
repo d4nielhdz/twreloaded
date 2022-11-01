@@ -21,7 +21,6 @@ function App() {
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async user => {
       if (user) {
-        console.log("logged in");
         let userdb = await getUserById(user.uid);
         setUser(userdb);
       }
