@@ -1,23 +1,39 @@
-import React, { useContext, useState } from 'react'
-import CreateTweet from '../../components/CreateTweet'
-import Tweet from '../../components/Tweet'
+import React, { useContext, useState } from 'react';
 import { AppContext } from '../../context/AppContext';
-import { RiPencilFill } from 'react-icons/ri';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { auth } from '../../firebase-config';
+import { sendPasswordResetEmail  } from 'firebase/auth';
+import { Navigate, useParams } from 'react-router-dom';
+import { changeUsername, deleteUser } from '../../services/auth-service';
 
 const EditProfileScreen = () => {
   const context = useContext(AppContext);
-  const navigate = useNavigate();
-  const email = 'adri@mail.com';
-  const [username, setUsername] = useState(context.username ?? '');
-  const [pswd, setPswd] = useState('');
-  const [pswdConf, setPswdConf] = useState('');
 
-  const saveChanges = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const { id } = useParams();
+  const isOwner = id == auth.currentUser?.uid ?? false;
+
+  const email = context.user?.email;
+  const [username, setUsername] = useState(context.user?.username ?? '');
+
+  if (!isOwner) {
+    return <Navigate to="/login" replace />;
   }
 
-  const cancelEdit = () => navigate(-1);
+  const onSubmitChangeUsername = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (username == "") return;
+    await changeUsername(context.user!, username!);
+    context.setUser({...context.user!, username: username });
+  }
+
+  const sendChangePasswordEmail = () => {
+    sendPasswordResetEmail(auth, context.user!.email).then(() => {
+      alert("Se te ha enviado un correo para cambiar tu contraseña.");
+    })
+  }
+
+  const onDeleteAccount = async () => {
+    await deleteUser(context.user!);
+  }
 
   return (
     <div>
@@ -28,7 +44,7 @@ const EditProfileScreen = () => {
         value={email}
         disabled={true}
       />
-      <form onSubmit={saveChanges} className='flex flex-column g-1'>
+      <form onSubmit={onSubmitChangeUsername} className='flex flex-column g-1'>
         <input
           type="text"
           id="username"
@@ -38,26 +54,16 @@ const EditProfileScreen = () => {
           value={username}
           required
         />
-        <input
-          type="password"
-          placeholder="Nueva contraseña"
-          className='input-field w-100'
-          onChange={(e) => setPswd(e.target.value)}
-          value={pswd}
-        />
-        <input
-          type="password"
-          placeholder="Confirmar contraseña"
-          className='input-field w-100'
-          onChange={(e) => setPswdConf(e.target.value)}
-          value={pswdConf}
-        />
         <div className='flex g-1'>
-          <button type='button' onClick={cancelEdit} className='btn main-alt ml-auto'>Cancelar</button>
-          <button type='submit' className='btn main'>Guardar cambios</button>
+          <button type='submit' className='btn main ml-auto'>Cambiar nombre de usuario</button>
         </div>
-        
       </form>
+      <div className='flex g-1'>
+          <button onClick={sendChangePasswordEmail} className='btn main-alt ml-auto mt-1'>Cambiar contraseña</button>
+        </div>
+        <div className='flex g-1'>
+          <button onClick={onDeleteAccount} className='btn danger ml-auto mt-1'>Elminiar cuenta</button>
+        </div>
     </div>
   )
 }

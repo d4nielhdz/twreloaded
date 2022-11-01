@@ -1,22 +1,37 @@
 import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../../context/AppContext';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../../firebase-config';
 import '../../styles/login.scss';
+import { User } from '../../models/user';
+import { registerUser } from '../../services/auth-service';
 
 const RegisterScreen = () => {
   const navigate = useNavigate();
-  const context = useContext(AppContext);
-
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [pswd, setPswd] = useState('');
   const [pswdConf, setPswdConf] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const submitRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    localStorage.setItem("username", JSON.stringify(username));
-    context.setUsername(username);
-    navigate("/");
+    setLoading(true);
+    try {
+      const fbUser = await createUserWithEmailAndPassword(auth, email, pswd);
+      const user: User = {
+        id: fbUser.user.uid,
+        email: fbUser.user.email!,
+        username: username,
+      };
+      await registerUser(user);
+      navigate("/");
+    } catch (error: any) {
+      console.log(error.message);
+    } finally {
+      setLoading(false);
+    }
   }
 
   const gotoLogin = () => navigate('/login', { replace: true });
@@ -59,9 +74,10 @@ const RegisterScreen = () => {
           value={pswdConf}
           required
         />
-
-        <button type='submit' className='btn main'>Registrarse</button>
-
+        {loading
+          ? <div className="btn main w-100 text-center"><div className="lds-ring"><div></div><div></div><div></div><div></div></div></div>
+          : <button type='submit' className='btn main'>Registrarse</button>
+        }
         <button type='button' onClick={gotoLogin} className='btn link'>Ya tengo cuenta.</button>
       </form>
     </div>

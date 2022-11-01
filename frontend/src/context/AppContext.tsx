@@ -1,12 +1,14 @@
+
 import { createContext, Dispatch, SetStateAction } from "react";
+import { User } from "../models/user";
 
 
 interface AppContextInterface {
-    username: string | null;
-    setUsername: Dispatch<SetStateAction<string | null>>;
+    user: User | undefined;
+    setUser: Dispatch<SetStateAction<User | undefined>>;
 }
 
 export const AppContext = createContext<AppContextInterface>({
-    username: '',
-    setUsername: () => '',
+    user: undefined,
+    setUser: () => null,
 });

@@ -3,19 +3,21 @@ import { AiFillHome, AiOutlineLogout } from 'react-icons/ai';
 import { FaUserAlt } from 'react-icons/fa';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { AppContext } from '../context/AppContext';
+import { auth } from '../firebase-config';
+import { signOut } from 'firebase/auth';
 
 const Layout = () => {
     const context = useContext(AppContext);
     const navigate = useNavigate();
     const [query, setQuery] = useState("");
 
-    const logout = () => {
-        localStorage.clear();
-        context.setUsername(null);
+    const logout = async () => {
+        await signOut(auth);
+        context.setUser(undefined);
         navigate('login');
     }
 
-    const keyDown = (event: React.KeyboardEvent<HTMLElement>) => {
+    const keyDown = async (event: React.KeyboardEvent<HTMLElement>) => {
         if (event.key === 'Enter') {
             navigate('search?query=' + query);
             setQuery('');
@@ -25,6 +27,9 @@ const Layout = () => {
     return (
         <div className='app'>
             <div className='sidemenu'>
+                {/* <div>
+                    USUARIO: {context.user?.id}
+                </div> */}
                 <div>
                     <input 
                         type="text" 
@@ -39,7 +44,7 @@ const Layout = () => {
                 <nav>
                     <ul>
                         <li><NavLink end to='/' className={({ isActive }) => isActive ? "nav-link active" : "nav-link"} ><AiFillHome /> Inicio</NavLink></li>
-                        <li><NavLink to={`profile/${'me'}`} className={({ isActive }) => isActive ? "nav-link active" : "nav-link"} ><FaUserAlt /> Perfil</NavLink></li>
+                        <li><NavLink to={`profile/${context.user?.id}`} className={({ isActive }) => isActive ? "nav-link active" : "nav-link"} ><FaUserAlt /> Perfil</NavLink></li>
                     </ul>
                 </nav>
 
