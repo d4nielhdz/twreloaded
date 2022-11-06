@@ -19,7 +19,6 @@ const SearchScreen = () => {
         if (searchQuery) {
             const getResults = async () => {
                 const data = await searchUsers(searchQuery) as User[];
-                console.log(data);
                 setResults(data);
             }
             getResults().catch(console.error);

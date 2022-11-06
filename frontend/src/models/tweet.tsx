@@ -1,7 +1,7 @@
 import { User } from "./user";
 
 export type TweetModel = {
-    id: string,
+    id: string | undefined,
     user: User,
     content: string,
     replyTo: string | null,

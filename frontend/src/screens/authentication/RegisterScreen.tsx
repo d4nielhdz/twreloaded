@@ -8,6 +8,7 @@ import { User } from '../../models/user';
 import { registerUser } from '../../services/auth-service';
 
 const RegisterScreen = () => {
+  const context = useContext(AppContext);
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
@@ -26,6 +27,7 @@ const RegisterScreen = () => {
         username: username,
       };
       await registerUser(user);
+      context.setUser(user);
       navigate("/");
     } catch (error: any) {
       console.log(error.message);

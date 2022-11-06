@@ -1,12 +1,22 @@
-import axios from 'axios';
-import { User } from '../models/user';
 
-const baseUrl = 'http://127.0.0.1:5001/twreloaded-cc2cf/us-central1/api';
+import { User } from '../models/user';
+import { getAuthConfig } from './auth-service';
+import axios from './axios';
 
 export const searchUsers = async (query: string) => {
     try {
-        let response = await axios.get(`${baseUrl}/users/search`, { params: { query: query }});
+        let response = await axios.get('/users/search', { params: { query: query }});
         return response.data as User[];
+    } catch (e) {
+        console.log(e);
+        throw e;
+    }
+}
+
+export const toggleFollowUser = async (user: User) => {
+    try {
+        let config = await getAuthConfig();
+        await axios.post(`/interaction/follow/${user.id}`, null, config);
     } catch (e) {
         console.log(e);
         throw e;

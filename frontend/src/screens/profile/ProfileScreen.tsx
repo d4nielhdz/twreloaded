@@ -9,6 +9,7 @@ import { getUserById } from '../../services/auth-service';
 import { User } from '../../models/user';
 import { TweetModel } from '../../models/tweet';
 import { getTweetsFromUser } from '../../services/tweets-service';
+import { toggleFollowUser } from '../../services/users-service';
 
 const ProfileScreen = () => {
   const context = useContext(AppContext);
@@ -27,7 +28,11 @@ const ProfileScreen = () => {
 
   const gotoEditProfile = () => navigate('edit');
 
-  const toggleFollow = () => setFollowing(!following);
+  const toggleFollow = async () => {
+    if (!profile) return;
+    await toggleFollowUser(profile);
+    setFollowing(!following); 
+  };
 
   useEffect(() => {
     if (!isOwner) {
@@ -45,13 +50,18 @@ const ProfileScreen = () => {
     if (profile) {
       const getTweets = async () => {
         const data = await getTweetsFromUser(profile) as TweetModel[];
-        console.log(data);
         setTweets(data);
       }
       getTweets().catch(console.error);
       setLoading(false);
     }
   }, [profile]);
+
+  const onTweetCreated = (tweet: TweetModel) => {
+    let updatedTweets = [...tweets];
+    updatedTweets.push(tweet);
+    setTweets(updatedTweets);
+  }
 
   return (
     <div>
@@ -77,7 +87,7 @@ const ProfileScreen = () => {
       {
         isOwner && 
         <div>
-          <CreateTweet />
+          <CreateTweet onTweetCreated={(tweet:TweetModel) => onTweetCreated(tweet)} />
         </div>
       }
       <div>

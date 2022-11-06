@@ -1,6 +1,7 @@
 import * as admin from 'firebase-admin';
 import { User } from '../models/user';
 import * as express from 'express';
+import { verifyToken } from '../middleware/auth';
 
 const router = express.Router();
 const db = admin.firestore();
@@ -46,7 +47,6 @@ router.get('/:id', async (req, res) => {
 // Create a new user
 router.post('/', async (req, res) => {
     const user = req.body;
-
     const snapshot = await db.collection('users').where("username", "==", user.username).get();
     
     if (snapshot.empty) {
@@ -61,7 +61,7 @@ router.post('/', async (req, res) => {
 });
 
 // Update a user
-router.put('/:id', async (req, res) => {
+router.put('/:id', verifyToken, async (req, res) => {
     const user = req.body;
 
     const snapshot = await db.collection('users').where("username", "==", user.username).get();
@@ -75,7 +75,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // Delete a user
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', verifyToken, async (req, res) => {
     await db.collection('users').doc(req.params.id).delete();
     res.status(200).send();
 });
