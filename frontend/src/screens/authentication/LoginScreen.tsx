@@ -41,7 +41,7 @@ const LoginScreen = () => {
   }
 
   const gotoRegister = () => navigate('/register', { replace: true });
-
+  const gotoHome = () => navigate('/home', { replace: true });
   return (
     <div className='login'>
       <form className='login-form' onSubmit={submitLogin}>
@@ -65,7 +65,7 @@ const LoginScreen = () => {
         />
         {loading
           ? <div className="btn main w-100 text-center"><div className="lds-ring"><div></div><div></div><div></div><div></div></div></div>
-          : <button type='submit' className='btn main'>Iniciar sesión</button>}
+          : <button type='submit' onClick={gotoHome} className='btn main'>Iniciar sesión</button>}
 
         <button type='button' onClick={gotoRegister} className='btn link'>Crear una cuenta.</button>
       </form>

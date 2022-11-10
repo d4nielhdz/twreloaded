@@ -36,6 +36,7 @@ function App() {
         <Routes>
           <Route path='login' element={<LoginScreen />} />
           <Route path='register' element={<RegisterScreen />} />
+          <Route path='home' element={<HomeScreen />} />
           <Route path="/" element={<Layout />}>
             <Route index element={<ProtectedRoute><HomeScreen /></ProtectedRoute>} />
             <Route path="profile/:id" element={<ProfileScreen />} />
