@@ -18,18 +18,12 @@
         gap: 24px;
     }
 
-    &.reply {
-        padding-left: 50px;
-        position: relative;
-        
-        &::before {
-            content: '';
-            position: absolute;
-            top: 12px;
-            bottom: 12px;
-            left: 25px;
-            width: 2px;
-            background: rgb(214, 214, 214);
+    .reply {
+        color: gray;
+        margin-bottom: 1em;
+
+        &:hover {
+            text-decoration: underline;
         }
     }
 }

@@ -56,3 +56,14 @@ export const getTweetsFromFollowers = async () => {
         throw e;
     }
 }
+
+export const getTweetAndReplies = async (id: string) => {
+    try {
+        let response = await axios.get(`/tweets/${id}`);
+        let tweetData = response.data;
+        return tweetData;
+    } catch (e) {
+        console.log(e);
+        throw e;
+    }
+}

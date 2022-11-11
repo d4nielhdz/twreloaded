@@ -6,6 +6,7 @@ import { auth } from '../../firebase-config';
 import '../../styles/login.scss';
 import { User } from '../../models/user';
 import { registerUser } from '../../services/auth-service';
+import Loader from '../../components/Loader';
 
 const RegisterScreen = () => {
   const context = useContext(AppContext);
@@ -77,7 +78,7 @@ const RegisterScreen = () => {
           required
         />
         {loading
-          ? <div className="btn main w-100 text-center"><div className="lds-ring"><div></div><div></div><div></div><div></div></div></div>
+          ? <div className="btn main w-100 text-center"><Loader color={'white'} /></div>
           : <button type='submit' className='btn main'>Registrarse</button>
         }
         <button type='button' onClick={gotoLogin} className='btn link'>Ya tengo cuenta.</button>

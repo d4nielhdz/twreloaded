@@ -64,7 +64,7 @@ router.get('/followers', verifyToken, async (req, res) => {
     });
 
     // NECESITA UN INDEX
-    // let snapshot = await db.collection("tweets").where("userId", "in", followedUsers).where("replyTo", "==", "null").orderBy("date", "desc").limit(10).get();
+    // let snapshot = await db.collection("tweets").where("userId", "in", followedUsers).orderBy("date", "desc").limit(10).get();
     let snapshot = await db.collection("tweets").where("userId", "in", followedUsersIds).limit(10).get();
 
     let tweets : any[] = [];
@@ -83,6 +83,51 @@ router.get('/followers', verifyToken, async (req, res) => {
     });
 
     res.status(200).send(JSON.stringify(tweets));
+});
+
+// Get a tweets and its replies
+router.get('/:id', async (req, res) => {
+    const snapshot = await db.collection('tweets').doc(req.params.id).get();
+    const tweetId = snapshot.id;
+    const tweetData = snapshot.data();
+
+    const tweetUserSnapshot = await db.collection('users').doc(tweetData!.userId).get();
+    const tweetUserData = tweetUserSnapshot.data();
+
+    const tweet : Tweet = {
+        id: tweetId,
+        user: {
+            id: tweetUserSnapshot.id,
+            email: tweetUserData!.email,
+            username: tweetUserData!.username,
+        },
+        content: tweetData!.content,
+        replyTo: tweetData!.replyTo,
+        date: tweetData!.date,
+    };
+
+    const repliesSnapshot = await db.collection('tweets').where("replyTo", "==", tweetId).get();
+    let replies : any[] = [];
+
+    for (let reply of repliesSnapshot.docs) {
+        let replyData = reply.data();
+        let user = await db.collection('users').doc(replyData.userId).get();
+        let userData = user.data();
+
+        replies.push({
+            id: reply.id,
+            user: {
+                id: user.id,
+                email: userData!.email,
+                username: userData!.username,
+            },
+            content: replyData.content,
+            replyTo: replyData.replyTo,
+            date: replyData.date,
+        });
+    }
+
+    res.status(200).send(JSON.stringify({ tweet, replies }));
 });
 
 module.exports = router;

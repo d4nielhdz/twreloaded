@@ -4,7 +4,7 @@ import { TweetModel } from '../models/tweet';
 import { postTweet } from '../services/tweets-service';
 import '../styles/tweet.scss';
 
-const CreateTweet = ({ onTweetCreated } : { onTweetCreated : (tweet: TweetModel) => void}) => {
+const CreateTweet = ({ onTweetCreated, replyTo } : { onTweetCreated : (tweet: TweetModel) => void, replyTo? : string } ) => {
     const context = useContext(AppContext);
     const [tweetContent, setTweetContent] = useState('');
 
@@ -18,7 +18,7 @@ const CreateTweet = ({ onTweetCreated } : { onTweetCreated : (tweet: TweetModel)
                 username: context.user!.username
             },
             content: tweetContent,
-            replyTo: null
+            replyTo: replyTo ?? null
         });
         onTweetCreated(newTweet);
         setTweetContent('');
@@ -29,11 +29,11 @@ const CreateTweet = ({ onTweetCreated } : { onTweetCreated : (tweet: TweetModel)
             <textarea 
             value={tweetContent} 
             onChange={(e) => setTweetContent(e.target.value)} 
-            placeholder='¿Qué está pasando?' 
+            placeholder={replyTo ? 'Twittea tu respuesta' : '¿Qué está pasando?'}
             className='input-field w-100'
             />
             <div className='action'>
-                <input type="submit" value="Tweetear" className='btn main' />
+                <input type="submit" value={replyTo ? "Responder" : "Tweetear"} className='btn main' />
             </div>
             
         </form>

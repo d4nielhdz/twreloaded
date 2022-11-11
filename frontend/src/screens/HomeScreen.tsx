@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import CreateTweet from '../components/CreateTweet'
+import Loader from '../components/Loader';
 import Tweet from '../components/Tweet'
 import { TweetModel } from '../models/tweet';
 import { getTweetsFromFollowers, getTweetsFromUser } from '../services/tweets-service';
@@ -12,9 +13,9 @@ const HomeScreen = () => {
     const getTweets = async () => {
       const data = await getTweetsFromFollowers() as TweetModel[];
       setTweets(data);
+      setLoading(false);
     }
     getTweets().catch(console.error);
-    setLoading(false);
   }, []);
 
   const onTweetCreated = (tweet: TweetModel) => {
@@ -31,7 +32,7 @@ const HomeScreen = () => {
       <div>
         {
           loading
-            ? <div className="lds-ring blue"><div></div><div></div><div></div><div></div></div>
+            ? <Loader />
             : tweets.map((tweet, i) => <Tweet tweet={tweet} key={i} />)
         }
       </div>

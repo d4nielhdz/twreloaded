@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import CreateTweet from '../../components/CreateTweet'
 import Tweet from '../../components/Tweet'
 import { AppContext } from '../../context/AppContext';
-import {RiPencilFill} from 'react-icons/ri';
+import { RiPencilFill } from 'react-icons/ri';
 import { auth } from '../../firebase-config';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { getUserById } from '../../services/auth-service';
@@ -10,6 +10,7 @@ import { User } from '../../models/user';
 import { TweetModel } from '../../models/tweet';
 import { getTweetsFromUser } from '../../services/tweets-service';
 import { toggleFollowUser } from '../../services/users-service';
+import Loader from '../../components/Loader';
 
 const ProfileScreen = () => {
   const context = useContext(AppContext);
@@ -31,7 +32,7 @@ const ProfileScreen = () => {
   const toggleFollow = async () => {
     if (!profile) return;
     await toggleFollowUser(profile);
-    setFollowing(!following); 
+    setFollowing(!following);
   };
 
   useEffect(() => {
@@ -51,9 +52,9 @@ const ProfileScreen = () => {
       const getTweets = async () => {
         const data = await getTweetsFromUser(profile) as TweetModel[];
         setTweets(data);
+        setLoading(false);
       }
       getTweets().catch(console.error);
-      setLoading(false);
     }
   }, [profile]);
 
@@ -64,40 +65,40 @@ const ProfileScreen = () => {
   }
 
   return (
-    <div>
-      <div className='mb-2'>
-        <div className='flex'>
-          <h1>{profile?.username}</h1>
+    loading
+      ? <Loader />
+      : <div>
+        <div className='mb-2'>
+          <div className='flex'>
+            <h1>{profile?.username}</h1>
+            {
+              isOwner ? <button onClick={gotoEditProfile} className='btn ml-1'><RiPencilFill /></button>
+                : following ? <button onClick={toggleFollow} className='btn main-alt ml-auto'>Unfollow</button>
+                  : <button onClick={toggleFollow} className='btn main ml-auto'>Follow</button>
+            }
+          </div>
+          <div className='flex g-2  mt-1'>
+            <div>
+              <p><b>Tweets</b>: {num_tweets}</p>
+            </div>
+            <div>
+              <p><b>Seguidores</b>: {followers}</p>
+            </div>
+          </div>
+
+        </div>
+        {
+          isOwner &&
+          <div>
+            <CreateTweet onTweetCreated={(tweet: TweetModel) => onTweetCreated(tweet)} />
+          </div>
+        }
+        <div>
           {
-            isOwner ? <button onClick={gotoEditProfile} className='btn ml-1'><RiPencilFill /></button>
-            : following ? <button onClick={toggleFollow} className='btn main-alt ml-auto'>Unfollow</button> 
-              : <button onClick={toggleFollow} className='btn main ml-auto'>Follow</button>
+            tweets.map((tweet, i) => <Tweet tweet={tweet} key={i} />)
           }
         </div>
-        <div className='flex g-2  mt-1'>
-          <div>
-            <p><b>Tweets</b>: {num_tweets}</p>
-          </div>
-          <div>
-            <p><b>Seguidores</b>: {followers}</p>
-          </div>
-        </div>
-        
       </div>
-      {
-        isOwner && 
-        <div>
-          <CreateTweet onTweetCreated={(tweet:TweetModel) => onTweetCreated(tweet)} />
-        </div>
-      }
-      <div>
-        {
-          loading
-            ? <div className="lds-ring blue"><div></div><div></div><div></div><div></div></div>
-            : tweets.map((tweet, i) => <Tweet tweet={tweet} key={i} />)
-        }
-      </div>
-    </div>
   )
 }
 

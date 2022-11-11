@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import '../styles/tweet.scss';
 import { MdOutlineChatBubbleOutline } from 'react-icons/md';
 import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai';
+import { FaReplyAll } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { TweetModel } from '../models/tweet';
 
@@ -13,11 +14,16 @@ const Tweet = ({ tweet } : { tweet : TweetModel }) => {
     const [like, setLike] = useState(false);
 
     const seeProfile = (e: any) => {
-        e.stopPropagation()
-        navigate(`/profile/${tweet.user.id}`)
+        e.stopPropagation();
+        navigate(`/profile/${tweet.user.id}`);
     };
     
     const seeTweet = () => navigate(`/tweet/${tweet.id}`);
+
+    const seeReply = (e: any) => {
+        e.stopPropagation();
+        navigate(`/tweet/${tweet.replyTo}`);
+    };
 
     const getLikesButtonContent = () => {
         if (like) {
@@ -28,7 +34,11 @@ const Tweet = ({ tweet } : { tweet : TweetModel }) => {
     }
 
     return (
-        <div className={`tweet ${tweet.replyTo ? 'reply' : ''}`} onClick={seeTweet}>
+        <div className='tweet' onClick={seeTweet}>
+            {
+                tweet.replyTo &&
+                <button className='btn link reply' onClick={seeReply}><FaReplyAll /> Respuesta</button>
+            }
             <div className='tweet-user'>
                 <button className='bold btn link' onClick={seeProfile}>{tweet.user.username}</button>
             </div>
