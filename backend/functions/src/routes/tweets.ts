@@ -3,14 +3,15 @@ import * as express from "express";
 import { Tweet } from "../models/tweet";
 import { verifyToken } from "../middleware/auth";
 import { User } from "../models/user";
+import { TweetRepository } from "../repositories/tweet";
 
 const router = express.Router();
 const db = admin.firestore();
 
 // Create a new tweet
 router.post("/", verifyToken, async (req, res) => {
-  const tweet = req.body as Tweet;
-  let newTweet = await db.collection("tweets").add({
+  const tweet = req.body;
+  let newTweet = await TweetRepository.saveTweet({
     userId: tweet.user.id,
     content: tweet.content,
     replyTo: tweet.replyTo ?? null,

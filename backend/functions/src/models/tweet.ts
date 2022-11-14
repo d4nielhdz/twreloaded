@@ -1,10 +1,8 @@
-import { User } from "./user";
-
 export type Tweet = {
   id: string;
-  user: User;
+  userId: string;
   content: string;
   replyTo: string | null;
-  date: Date;
+  date: number;
   nextTweetId?: string;
 };
