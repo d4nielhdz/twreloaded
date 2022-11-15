@@ -1,5 +1,5 @@
 import { firestore } from "firebase-admin";
-import { RendereredTweet, Tweet } from "../models/tweet";
+import { RenderedTweet, Tweet } from "../models/tweet";
 import { User } from "../models/user";
 import { flattenDoc } from "../utils/misc";
 import { UserRepository } from "./user";
@@ -16,10 +16,12 @@ export class TweetRepository {
       .limit(10)
       .get();
 
-    return (snapshot.docs.map(flattenDoc) as Tweet[]).map(async (tweet) => {
-      const user = await UserRepository.getUserById(tweet.userId);
-      return { ...tweet, user } as RendereredTweet;
-    });
+    return Promise.all(
+      (snapshot.docs.map(flattenDoc) as Tweet[]).map(async (tweet) => {
+        const user = await UserRepository.getUserById(tweet.userId);
+        return { ...tweet, user } as RenderedTweet;
+      })
+    );
   };
 
   static getFollowedUsersTweets = async (userId: string) => {
@@ -57,11 +59,11 @@ export class TweetRepository {
     const tweet = await TweetRepository.getTweetById(tweetId);
 
     const repliesSnapshot = await ref.where("replyTo", "==", tweetId).get();
-    const replies = (repliesSnapshot.docs.map(flattenDoc) as Tweet[]).map(
-      async (tweet) => {
-        const user = await UserRepository.getUserById(tweet.userId);
-        return { ...tweet, user };
-      }
+    const replies = await Promise.all(
+      (repliesSnapshot.docs.map(flattenDoc) as Tweet[]).map(async (t) => {
+        const user = await UserRepository.getUserById(t.userId);
+        return { ...t, user };
+      })
     );
     return { tweet, replies };
   };

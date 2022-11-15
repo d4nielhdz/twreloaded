@@ -5,35 +5,20 @@ import TweetScreen from "./screens/TweetScreen";
 import NotFoundScreen from "./screens/NotFoundScreen";
 import Layout from "./components/Layout";
 import LoginScreen from "./screens/authentication/LoginScreen";
-import { useEffect, useState } from "react";
-import { AppContext } from "./context/AppContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import RegisterScreen from "./screens/authentication/RegisterScreen";
 import EditProfileScreen from "./screens/profile/EditProfileScreen";
 import SearchScreen from "./screens/SearchScreen";
-import { auth } from "./firebase-config";
-import { User } from "./models/user";
-import { getUserById } from "./services/auth-service";
-import { logAppOpened } from "./services/actions-service";
+import useFirebaseUser from "./hooks/useFirebaseUser";
+
+function AuthIsLoaded({ children }: { children: any }) {
+  const { hasLoaded } = useFirebaseUser();
+  return hasLoaded ? <>{children}</> : <div>Cargando...</div>;
+}
 
 function App() {
-  const [user, setUser] = useState<User>();
-
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(async (user) => {
-      if (user) {
-        let userdb = await getUserById(user.uid);
-        setUser(userdb);
-        await logAppOpened(user.uid);
-      }
-    });
-    return () => {
-      unsubscribe();
-    };
-  }, []);
-
   return (
-    <AppContext.Provider value={{ user: user, setUser: setUser }}>
+    <AuthIsLoaded>
       <BrowserRouter>
         <Routes>
           <Route path="login" element={<LoginScreen />} />
@@ -63,7 +48,7 @@ function App() {
           </Route>
         </Routes>
       </BrowserRouter>
-    </AppContext.Provider>
+    </AuthIsLoaded>
   );
 }
 

@@ -1,19 +1,17 @@
-import React, { useContext } from 'react'
-import { Navigate } from 'react-router-dom';
-import { AppContext } from '../context/AppContext';
-import { auth } from '../firebase-config';
+import React from "react";
+import { Navigate } from "react-router-dom";
+import useFirebaseUser from "../hooks/useFirebaseUser";
 
 type ProtectedRouteProps = {
-    children: JSX.Element;
+  children: JSX.Element;
 };
 
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-    // const context = useContext(AppContext);
-    // if (!context.user) {
-    if (!auth.currentUser) {
-        return <Navigate to="/login" replace />;
-    }
-    return children;
-}
+  const user = useFirebaseUser();
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+  return children;
+};
 
-export default ProtectedRoute
+export default ProtectedRoute;

@@ -8,9 +8,7 @@ const router = express.Router();
 router.post("/", verifyToken, async (req, res) => {
   const tweet = req.body;
   let newTweet = await TweetRepository.saveTweet({
-    userId: tweet.user.id,
-    content: tweet.content,
-    replyTo: tweet.replyTo ?? null,
+    ...tweet,
     date: Date.now(),
   });
   res.status(201).send(newTweet.id);

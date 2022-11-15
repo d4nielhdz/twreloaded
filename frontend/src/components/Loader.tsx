@@ -1,9 +1,14 @@
-import React, { useContext } from 'react'
-import { Navigate } from 'react-router-dom';
-import { auth } from '../firebase-config';
+import React from "react";
 
 const Loader = ({ color = "blue" }: { color?: string }) => {
-    return <div className={ `lds-ring ${color}` }><div></div><div></div><div></div><div></div></div>;
-}
+  return (
+    <div className={`lds-ring ${color}`}>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  );
+};
 
-export default Loader
+export default Loader;

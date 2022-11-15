@@ -2,25 +2,25 @@ import React, { useEffect, useState } from "react";
 import CreateTweet from "../components/CreateTweet";
 import Loader from "../components/Loader";
 import Tweet from "../components/Tweet";
-import { TweetModel } from "../models/tweet";
+import { RenderedTweet } from "../models/tweet";
 import { getTweetsFromFollowers } from "../services/tweets-service";
 
 const HomeScreen = () => {
   const [loading, setLoading] = useState<boolean>(true);
-  const [tweets, setTweets] = useState<TweetModel[]>([]);
+  const [tweets, setTweets] = useState<RenderedTweet[]>([]);
 
   useEffect(() => {
     const getTweets = async () => {
-      const data = (await getTweetsFromFollowers()) as TweetModel[];
+      const data = (await getTweetsFromFollowers()) as RenderedTweet[];
       setTweets(data);
       setLoading(false);
     };
     getTweets().catch(console.error);
   }, []);
 
-  const onTweetCreated = (tweet: TweetModel) => {
+  const onTweetCreated = (tweet: RenderedTweet) => {
     let updatedTweets = tweets;
-    updatedTweets.push(tweet);
+    updatedTweets.unshift(tweet);
     setTweets(updatedTweets);
   };
 
@@ -28,7 +28,7 @@ const HomeScreen = () => {
     <div>
       <div>
         <CreateTweet
-          onTweetCreated={(tweet: TweetModel) => onTweetCreated(tweet)}
+          onTweetCreated={(tweet: RenderedTweet) => onTweetCreated(tweet)}
         />
       </div>
       <div>
