@@ -1,7 +1,7 @@
 export enum ActionType {
   TWEET,
   REPLY,
-  OPEN,
+  OPEN_APP,
 }
 export type Action = {
   performedAt: number;

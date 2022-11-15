@@ -14,6 +14,7 @@ import SearchScreen from "./screens/SearchScreen";
 import { auth } from "./firebase-config";
 import { User } from "./models/user";
 import { getUserById } from "./services/auth-service";
+import { logAppOpened } from "./services/actions-service";
 
 function App() {
   const [user, setUser] = useState<User>();
@@ -23,6 +24,7 @@ function App() {
       if (user) {
         let userdb = await getUserById(user.uid);
         setUser(userdb);
+        await logAppOpened(user.uid);
       }
     });
     return () => {

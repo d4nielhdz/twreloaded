@@ -10,6 +10,12 @@ export class UserRepository {
     const userResponse = snapshot.docs[0];
     return flattenDoc(userResponse) as User;
   };
+  static getUsersByIds = async (userIds: string[]) => {
+    const followedUsersSnapshot = await ref
+      .where(firestore.FieldPath.documentId(), "in", userIds)
+      .get();
+    return followedUsersSnapshot.docs.map(flattenDoc) as User[];
+  };
   static searchUsersByQuery = async (query: string) => {
     const snapshot = await ref
       .orderBy("username")

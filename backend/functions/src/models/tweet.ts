@@ -1,3 +1,5 @@
+import { User } from "./user";
+
 export type Tweet = {
   id: string;
   userId: string;
@@ -6,3 +8,4 @@ export type Tweet = {
   date: number;
   nextTweetId?: string;
 };
+export type RendereredTweet = Omit<Tweet, "userId"> & { user: User };

@@ -1,11 +1,9 @@
-import * as admin from "firebase-admin";
 import { User } from "../models/user";
 import * as express from "express";
 import { verifyToken } from "../middleware/auth";
 import { UserRepository } from "../repositories/user";
 
 const router = express.Router();
-const db = admin.firestore();
 
 // Get one user by username
 router.get("/username/:username", async (req, res) => {
