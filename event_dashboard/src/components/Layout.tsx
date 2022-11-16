@@ -50,16 +50,6 @@ const Layout = () => {
                 <AiFillHome /> Inicio
               </NavLink>
             </li>
-            <li>
-              <NavLink
-                to={`profile/${user?.uid}`}
-                className={({ isActive }) =>
-                  isActive ? "nav-link active" : "nav-link"
-                }
-              >
-                <FaUserAlt /> Perfil
-              </NavLink>
-            </li>
           </ul>
         </nav>
 

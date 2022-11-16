@@ -1,13 +1,29 @@
 import { firestore } from "firebase-admin";
+import { ActionType } from "../models/action";
 import { RenderedTweet, Tweet } from "../models/tweet";
 import { User } from "../models/user";
 import { flattenDoc } from "../utils/misc";
+import { ActionRepository } from "./action";
 import { UserRepository } from "./user";
 
 const ref = firestore().collection("tweets");
 export class TweetRepository {
   static saveTweet = async (tweet: Partial<Tweet>) => {
-    return await ref.add(tweet);
+    const res = await ref.add(tweet);
+    await ActionRepository.saveAction({
+      performedAt: Date.now(),
+      userId: tweet!.userId!,
+      tweetId: res.id,
+      actionType: ActionType.TWEET,
+    });
+    if (tweet.replyTo != null) {
+      await ActionRepository.saveAction({
+        performedAt: Date.now(),
+        userId: tweet!.userId!,
+        tweetId: tweet.replyTo,
+        actionType: ActionType.REPLY,
+      });
+    }
   };
   static getTweetsByUserId = async (userId: string) => {
     const snapshot = await ref
