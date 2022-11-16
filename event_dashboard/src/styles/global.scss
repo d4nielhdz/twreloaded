@@ -1,0 +1,163 @@
+:root {
+    --light-blue: aliceblue;
+    --blue: #00b4d8;
+    --dark-blue: #03045e;
+    --hover-blue: rgb(217, 232, 248);
+    --red: rgb(211, 48, 48);
+}
+
+*, *:before, *:after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+.sidemenu {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 300px;
+    padding: 50px;
+    background-color: var(--light-blue);
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+
+    nav {
+        ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+
+            .nav-link {
+                font-weight: bold;
+                padding: 0.5em;
+                border-radius: 5px;
+                display: inline-block;
+                text-decoration: none;
+                width: 100%;
+                color: var(--dark-blue);
+
+                &.active {
+                    color: var(--blue);
+                }
+
+                &:hover {
+                    background-color: var(--hover-blue);
+                }
+            }
+        }
+    }
+}
+
+.content {
+    margin-left: 300px;
+    padding: 50px;
+}
+
+.btn {
+    padding: 0.5em 1em;
+    border: none;
+    font-size: 1em;
+    background-color: transparent;
+    cursor: pointer;
+
+    &:hover {
+        background-color: var(--hover-blue);
+    }
+
+    &.main {
+        background-color: var(--blue);
+        color: white;
+        border-radius: 100px;
+        font-weight: bold;
+        padding: 0.75em 1.5em;
+    }
+
+    &.main-alt {
+        background-color: white;
+        color: var(--blue);
+        border-radius: 100px;
+        padding: 0.75em 1.5em;
+        outline: 1px solid var(--blue);
+        font-weight: bold;
+
+        &:hover {
+            background-color: var(--light-blue);
+        }
+    }
+
+    &.danger {
+        background-color: var(--red);
+        color: white;
+        border-radius: 100px;
+        font-weight: bold;
+        padding: 0.75em 1.5em;
+    }
+
+    &.link {
+        padding: 0;
+        &:hover {
+            background-color: transparent;
+            text-decoration: underline;
+        }
+    }
+}
+
+input[type=text], .input-field {
+    padding: 0.5em;
+    font-size: 1rem;
+    border-radius: 5px;
+    border: none;
+    outline: 1px solid var(--hover-blue);
+    resize: none;
+
+    &:focus, &:focus-within, &:focus-visible {
+        outline: 2px solid var(--blue);
+    }
+}
+
+// LOADER ICON
+.lds-ring {
+    display: inline-block;
+    position: relative;
+    width: 1em;
+    height: 1em;
+  }
+  .lds-ring div {
+    box-sizing: border-box;
+    display: block;
+    position: absolute;
+    width: 1em;
+    height: 1em;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    border-color: #fff transparent transparent transparent;
+  }
+
+  .lds-ring.blue div {
+    border-color: var(--blue) transparent transparent transparent;
+  }
+
+  .lds-ring div:nth-child(1) {
+    animation-delay: -0.45s;
+  }
+  .lds-ring div:nth-child(2) {
+    animation-delay: -0.3s;
+  }
+  .lds-ring div:nth-child(3) {
+    animation-delay: -0.15s;
+  }
+  @keyframes lds-ring {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  

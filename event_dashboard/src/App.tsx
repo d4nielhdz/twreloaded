@@ -1,25 +1,52 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import HomeScreen from "./screens/HomeScreen";
+import ProfileScreen from "./screens/profile/ProfileScreen";
+import TweetScreen from "./screens/TweetScreen";
+import NotFoundScreen from "./screens/NotFoundScreen";
+import Layout from "./components/Layout";
+import LoginScreen from "./screens/authentication/LoginScreen";
+import ProtectedRoute from "./components/ProtectedRoute";
+import EditProfileScreen from "./screens/profile/EditProfileScreen";
+import SearchScreen from "./screens/SearchScreen";
+import useFirebaseUser from "./hooks/useFirebaseUser";
+
+function AuthIsLoaded({ children }: { children: any }) {
+  const { hasLoaded } = useFirebaseUser();
+  return hasLoaded ? <>{children}</> : <div>Cargando...</div>;
+}
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <AuthIsLoaded>
+      <BrowserRouter>
+        <Routes>
+          <Route path="login" element={<LoginScreen />} />
+          <Route path="/" element={<Layout />}>
+            <Route path="home" element={<HomeScreen />} />
+            <Route
+              index
+              element={
+                <ProtectedRoute>
+                  <HomeScreen />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="profile/:id" element={<ProfileScreen />} />
+            <Route
+              path="profile/:id/edit"
+              element={
+                <ProtectedRoute>
+                  <EditProfileScreen />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="tweet/:id" element={<TweetScreen />} />
+            <Route path="search" element={<SearchScreen />} />
+            <Route path="*" element={<NotFoundScreen />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </AuthIsLoaded>
   );
 }
 
