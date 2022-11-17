@@ -48,7 +48,8 @@ export class TweetRepository {
         const user = await UserRepository.getInstance().getUserById(
           tweet.userId
         );
-        return { ...tweet, user } as RenderedTweet;
+        const replyCount = await this.getTweetReplyCount(tweet.id);
+        return { ...tweet, user, replyCount } as RenderedTweet;
       })
     );
   };
@@ -70,18 +71,26 @@ export class TweetRepository {
       .limit(10)
       .get();
 
-    const tweets = (snapshot.docs.map(flattenDoc) as Tweet[]).map((tweet) => {
-      const user = followedUsers.find((u) => u.id == tweet.userId);
-      return { ...tweet, user };
-    });
+    const tweets = await Promise.all(
+      (snapshot.docs.map(flattenDoc) as Tweet[]).map(async (tweet) => {
+        const user = followedUsers.find((u) => u.id == tweet.userId);
+        const replyCount = await this.getTweetReplyCount(tweet.id);
+        return { ...tweet, user, replyCount } as RenderedTweet;
+      })
+    );
 
     return tweets;
+  };
+  private getTweetReplyCount = async (tweetId: string) => {
+    const snapshot = await this.ref.where("replyTo", "==", tweetId).get();
+    return snapshot.docs.length;
   };
   public getTweetById = async (tweetId: string) => {
     const snapshot = await this.ref.doc(tweetId).get();
     const tweet = flattenDoc(snapshot) as Tweet;
     const user = await UserRepository.getInstance().getUserById(tweet.userId);
-    return { ...tweet, user };
+    const replyCount = await this.getTweetReplyCount(tweetId);
+    return { ...tweet, user, replyCount } as RenderedTweet;
   };
   public getTweetWithRepliesById = async (tweetId: string) => {
     const tweet = await this.getTweetById(tweetId);
@@ -89,12 +98,13 @@ export class TweetRepository {
     const repliesSnapshot = await this.ref
       .where("replyTo", "==", tweetId)
       .get();
-    const replies = await Promise.all(
+    const replies = (await Promise.all(
       (repliesSnapshot.docs.map(flattenDoc) as Tweet[]).map(async (t) => {
         const user = await UserRepository.getInstance().getUserById(t.userId);
-        return { ...t, user };
+        const replyCount = await this.getTweetReplyCount(t.id);
+        return { ...t, user, replyCount };
       })
-    );
+    )) as RenderedTweet[];
     return { tweet, replies };
   };
 }
