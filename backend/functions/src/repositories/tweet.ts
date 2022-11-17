@@ -6,27 +6,38 @@ import { flattenDoc } from "../utils/misc";
 import { ActionRepository } from "./action";
 import { UserRepository } from "./user";
 
-const ref = firestore().collection("tweets");
 export class TweetRepository {
-  static saveTweet = async (tweet: Partial<Tweet>) => {
-    const res = await ref.add(tweet);
-    await ActionRepository.saveAction({
+  private ref: firestore.CollectionReference;
+  private static instance: TweetRepository;
+  private constructor() {
+    this.ref = firestore().collection("tweets");
+  }
+  public static getInstance(): TweetRepository {
+    if (!TweetRepository.instance) {
+      TweetRepository.instance = new TweetRepository();
+    }
+    return TweetRepository.instance;
+  }
+  public saveTweet = async (tweet: Partial<Tweet>) => {
+    const res = await this.ref.add(tweet);
+    await ActionRepository.getInstance().saveAction({
       performedAt: Date.now(),
       userId: tweet!.userId!,
       tweetId: res.id,
       actionType: ActionType.TWEET,
     });
     if (tweet.replyTo != null) {
-      await ActionRepository.saveAction({
+      await ActionRepository.getInstance().saveAction({
         performedAt: Date.now(),
         userId: tweet!.userId!,
         tweetId: tweet.replyTo,
         actionType: ActionType.REPLY,
       });
     }
+    return res;
   };
-  static getTweetsByUserId = async (userId: string) => {
-    const snapshot = await ref
+  public getTweetsByUserId = async (userId: string) => {
+    const snapshot = await this.ref
       .where("userId", "==", userId)
       .orderBy("date", "desc")
       .limit(10)
@@ -34,25 +45,26 @@ export class TweetRepository {
 
     return Promise.all(
       (snapshot.docs.map(flattenDoc) as Tweet[]).map(async (tweet) => {
-        const user = await UserRepository.getUserById(tweet.userId);
+        const user = await UserRepository.getInstance().getUserById(
+          tweet.userId
+        );
         return { ...tweet, user } as RenderedTweet;
       })
     );
   };
 
-  static getFollowedUsersTweets = async (userId: string) => {
-    const user = await UserRepository.getUserById(userId);
+  public getFollowedUsersTweets = async (userId: string) => {
+    const user = await UserRepository.getInstance().getUserById(userId);
     const followedUsersIds = user.followedUsers ?? [];
 
     if (followedUsersIds.length === 0) return [];
 
-    const followedUsers: User[] = await UserRepository.getUsersByIds(
-      followedUsersIds
-    );
+    const followedUsers: User[] =
+      await UserRepository.getInstance().getUsersByIds(followedUsersIds);
 
     followedUsers.unshift(user);
 
-    const snapshot = await ref
+    const snapshot = await this.ref
       .where("userId", "in", followedUsersIds)
       .orderBy("date", "desc")
       .limit(10)
@@ -65,19 +77,21 @@ export class TweetRepository {
 
     return tweets;
   };
-  static getTweetById = async (tweetId: string) => {
-    const snapshot = await ref.doc(tweetId).get();
+  public getTweetById = async (tweetId: string) => {
+    const snapshot = await this.ref.doc(tweetId).get();
     const tweet = flattenDoc(snapshot) as Tweet;
-    const user = await UserRepository.getUserById(tweet.userId);
+    const user = await UserRepository.getInstance().getUserById(tweet.userId);
     return { ...tweet, user };
   };
-  static getTweetWithRepliesById = async (tweetId: string) => {
-    const tweet = await TweetRepository.getTweetById(tweetId);
+  public getTweetWithRepliesById = async (tweetId: string) => {
+    const tweet = await this.getTweetById(tweetId);
 
-    const repliesSnapshot = await ref.where("replyTo", "==", tweetId).get();
+    const repliesSnapshot = await this.ref
+      .where("replyTo", "==", tweetId)
+      .get();
     const replies = await Promise.all(
       (repliesSnapshot.docs.map(flattenDoc) as Tweet[]).map(async (t) => {
-        const user = await UserRepository.getUserById(t.userId);
+        const user = await UserRepository.getInstance().getUserById(t.userId);
         return { ...t, user };
       })
     );

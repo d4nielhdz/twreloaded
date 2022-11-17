@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.post("/logOpen", verifyToken, async (req, res) => {
   const userId = req.body.userId;
-  await ActionRepository.saveAction({
+  await ActionRepository.getInstance().saveAction({
     performedAt: Date.now(),
     userId,
     actionType: ActionType.OPEN_APP,
