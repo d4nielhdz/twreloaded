@@ -58,15 +58,15 @@ export class TweetRepository {
     const user = await UserRepository.getInstance().getUserById(userId);
     const followedUsersIds = user.followedUsers ?? [];
 
-    if (followedUsersIds.length === 0) return [];
-
     const followedUsers: User[] =
-      await UserRepository.getInstance().getUsersByIds(followedUsersIds);
+      followedUsersIds.length > 0
+        ? await UserRepository.getInstance().getUsersByIds(followedUsersIds)
+        : [];
 
-    followedUsers.unshift(user);
+    followedUsers.push(user);
 
     const snapshot = await this.ref
-      .where("userId", "in", followedUsersIds)
+      .where("userId", "in", [...followedUsersIds, userId])
       .orderBy("date", "desc")
       .limit(10)
       .get();
