@@ -23,7 +23,7 @@ const CreateTweet = ({
       replyTo: replyTo ?? null,
       date: Date.now(),
     });
-    onTweetCreated({ ...newTweet, user: user! });
+    onTweetCreated({ ...newTweet, user: user!, replyCount: 0 });
     setTweetContent("");
   };
 

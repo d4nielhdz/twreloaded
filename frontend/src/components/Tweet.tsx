@@ -57,7 +57,8 @@ const Tweet = ({ tweet }: { tweet: RenderedTweet }) => {
       <div className="tweet-actions">
         <div className="reply">
           <button className="btn">
-            <MdOutlineChatBubbleOutline /> {replies}
+            <MdOutlineChatBubbleOutline />{" "}
+            {tweet.replyCount === 0 ? "" : tweet.replyCount}
           </button>
         </div>
         <div className="like">

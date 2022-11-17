@@ -8,4 +8,7 @@ export type Tweet = {
   date: number;
   nextTweetId?: string;
 };
-export type RenderedTweet = Omit<Tweet, "userId"> & { user: User };
+export type RenderedTweet = Omit<Tweet, "userId"> & {
+  user: User;
+  replyCount: number;
+};

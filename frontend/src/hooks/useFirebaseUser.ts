@@ -12,17 +12,20 @@ export default function useFirebaseUser() {
       }
     };
     let isMounted = true;
-    const unsuscribe = auth.onIdTokenChanged((user) => {
-      if (!isMounted) return;
-      setUser(user);
+    const uns = auth.onAuthStateChanged((user) => {
       if (user) {
         logOpen();
       }
+    });
+    const unsuscribe = auth.onIdTokenChanged((user) => {
+      if (!isMounted) return;
+      setUser(user);
       setHasLoaded(true);
     });
     return () => {
       isMounted = false;
       unsuscribe();
+      uns();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth]);
