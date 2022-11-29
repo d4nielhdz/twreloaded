@@ -20,13 +20,12 @@ export class ReportRepository {
     let tweetsCreated = 0;
     let maxReplies = 0;
     let maxActions = 0;
-    let userIdWithMaxActions = "";
-    let tweetIdWithMaxReplies = "";
+    let userIdWithMaxActions = "Df3KJICCZLOC3UAugh8FHDRW1cG2";
+    let tweetIdWithMaxReplies = "04ogWOtUGz8C3Lk5Ble9";
     const actions = await this.actionRepository.getActionsByDateRange(
       dateStart,
       dateEnd
     );
-
     for (const action of actions) {
       const { userId, actionType } = action;
       const count = (actionCountByUserId.get(userId) ?? 0) + 1;

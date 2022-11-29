@@ -8,7 +8,7 @@ type ProtectedRouteProps = {
 
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const user = useFirebaseUser();
-  if (!user) {
+  if (!user.user) {
     return <Navigate to="/login" replace />;
   }
   return children;

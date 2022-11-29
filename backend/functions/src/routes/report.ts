@@ -8,15 +8,17 @@ const router = express.Router();
 
 const ONE_DAY = 86400000;
 
-router.get("/", verifyToken, async (req, res) => {
-  const { dateStart } = req.body;
-  const dateEnd = dateStart + ONE_DAY;
+router.get("/:dateStart", verifyToken, async (req, res) => {
+  console.log(req.params);
+  const { dateStart } = req.params;
+  const ds = parseInt(dateStart);
+  const dateEnd = ds + ONE_DAY * 7;
   const reportRepo = new ReportRepository(
     UserRepository.getInstance(),
     TweetRepository.getInstance(),
     ActionRepository.getInstance()
   );
-  const report = await reportRepo.createReport(dateStart, dateEnd);
+  const report = await reportRepo.createReport(ds, dateEnd);
   res.status(200).send(JSON.stringify(report));
 });
 

@@ -17,23 +17,24 @@ const LoginScreen = () => {
     setLoading(true);
     try {
       let credential;
-      if (username.indexOf("@") == -1) {
+      if (username.indexOf("@") === -1) {
         let dbUser = await getUserByUsername(username);
         credential = dbUser.email;
       } else {
         credential = username;
       }
-      await signInWithEmailAndPassword(auth, credential, pswd);
+      const res = await signInWithEmailAndPassword(auth, credential, pswd);
       navigate("/");
     } catch (error: any) {
-      console.log(error.message);
+      console.log(error);
     } finally {
       setLoading(false);
     }
   };
 
   const gotoRegister = () => navigate("/register", { replace: true });
-  const gotoHome = () => navigate("/home", { replace: true });
+  // const gotoHome = () => navigate("/home", { replace: true });
+
   return (
     <div className="login">
       <form className="login-form" onSubmit={submitLogin}>
@@ -60,7 +61,7 @@ const LoginScreen = () => {
             <Loader color={"white"} />
           </div>
         ) : (
-          <button type="submit" onClick={gotoHome} className="btn main">
+          <button type="submit" className="btn main">
             Iniciar sesión
           </button>
         )}
