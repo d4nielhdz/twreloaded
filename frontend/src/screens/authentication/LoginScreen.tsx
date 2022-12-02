@@ -60,7 +60,7 @@ const LoginScreen = () => {
             <Loader color={"white"} />
           </div>
         ) : (
-          <button type="submit" onClick={gotoHome} className="btn main">
+          <button type="submit" className="btn main">
             Iniciar sesión
           </button>
         )}
