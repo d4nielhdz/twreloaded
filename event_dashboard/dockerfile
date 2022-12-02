@@ -1,0 +1,5 @@
+FROM node:13.12.0-alpine
+WORKDIR /event_dashboard
+RUN npm install package.json
+COPY . ./
+CMD ["npm", "start"]
