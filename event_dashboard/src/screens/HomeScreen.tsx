@@ -10,6 +10,9 @@ import CardContent from "@mui/material/CardContent";
 import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
 import TextField from "@mui/material/TextField";
 import * as moment from "moment";
+import { PDFDownloadLink, PDFViewer } from '@react-pdf/renderer';
+import PDFReport from "../components/PDFReport";
+import ReactPDF from '@react-pdf/renderer';
 
 function subtractWeeks(numOfWeeks: number, date = new Date()) {
   date.setDate(date.getDate() - numOfWeeks * 7);
@@ -41,6 +44,10 @@ const HomeScreen = () => {
     setReport(report!);
     setLoading(false);
   };
+
+  const downloadReport = () => {
+    ReactPDF.render(<PDFReport report={report} selectedDate={dateRange?.start ?? new Date()}/>, `${__dirname}/example.pdf`);
+  }
 
   useEffect(() => {
     const range = getDateRange(numW);
@@ -109,6 +116,11 @@ const HomeScreen = () => {
                 <Tweet tweet={report.tweetWithMostReplies} />
               </CardContent>
             </Card>
+            <PDFDownloadLink document={<PDFReport report={report} selectedDate={dateRange?.start ?? new Date()} />} fileName="TweeterReloadedReport.pdf">
+              {({ blob, url, loading, error }) => (loading ? 'Cargando...' : <button type="button" className="btn main ml-auto">
+                Descargar reporte
+              </button>)}
+            </PDFDownloadLink>
           </div>
         )}
       </div>
